@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """config URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -18,4 +19,14 @@ from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+=======
+from django.contrib import admin
+from django.urls import include, path
+from django.views.generic import RedirectView
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", RedirectView.as_view(url="mainapp/")),
+    path("mainapp/", include("mainapp.urls")),
+>>>>>>> 90cd3ea1ddae7f3dd5392499e5006d778f5ad2e4
 ]
