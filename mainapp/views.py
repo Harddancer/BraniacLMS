@@ -1,56 +1,54 @@
-from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import reverse_lazy
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import CreateView, UpdateView
 
-from mainapp import models as mainapp_models
-
-
-class MainPageView(TemplateView):
-    template_name = "mainapp/index.html"
-
-
-class NewsPageView(TemplateView):
-    template_name = "mainapp/news.html"
-
-    def get_context_data(self, **kwargs):
-        # Get all previous data
-        context = super().get_context_data(**kwargs)
-        # Create your own data
-        context["news_qs"] = mainapp_models.News.objects.all()[:5]
-        return context
+from authapp import forms
 
 
-class NewsPageDetailView(TemplateView):
-    template_name = "mainapp/news_detail.html"
+class CustomLoginView(LoginView):
+    def form_valid(self, form):
+        ret = super().form_valid(form)
+        message = _("Login success!<br>Hi, %(username)s") % {
+            "username": self.request.user.get_full_name()
+            if self.request.user.get_full_name()
+            else self.request.user.get_username()
+        }
+        messages.add_message(self.request, messages.INFO, mark_safe(message))
+        return ret
 
-    def get_context_data(self, pk=None, **kwargs):
-        context = super().get_context_data(pk=pk, **kwargs)
-        context["news_object"] = get_object_or_404(mainapp_models.News, pk=pk)
-        return context
-
-
-class CoursesListView(TemplateView):
-    template_name = "mainapp/courses_list.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(CoursesListView, self).get_context_data(**kwargs)
-        context["objects"] = mainapp_models.Courses.objects.all()[:7]
-        return context
-
-
-class CoursesDetailView(TemplateView):
-    template_name = "mainapp/courses_detail.html"
-
-    def get_context_data(self, pk=None, **kwargs):
-        context = super(CoursesDetailView, self).get_context_data(**kwargs)
-        context["course_object"] = get_object_or_404(mainapp_models.Courses, pk=pk)
-        context["lessons"] = mainapp_models.Lesson.objects.filter(course=context["course_object"])
-        context["teachers"] = mainapp_models.CourseTeachers.objects.filter(course=context["course_object"])
-        return context
+    def form_invalid(self, form):
+        for _unused, msg in form.error_messages.items():
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                mark_safe(f"Something goes worng:<br>{msg}"),
+            )
+        return self.render_to_response(self.get_context_data(form=form))
 
 
-class ContactsPageView(TemplateView):
-    template_name = "mainapp/contacts.html"
+class CustomLogoutView(LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        messages.add_message(self.request, messages.INFO, _("See you later!"))
+        return super().dispatch(request, *args, **kwargs)
 
 
-class DocSitePageView(TemplateView):
-    template_name = "mainapp/doc_site.html"
+class RegisterView(CreateView):
+    model = get_user_model()
+    form_class = forms.CustomUserCreationForm
+    success_url = reverse_lazy("mainapp:main_page")
+
+
+class ProfileEditView(UserPassesTestMixin, UpdateView):
+    model = get_user_model()
+    form_class = forms.CustomUserChangeForm
+
+    def test_func(self):
+        return True if self.request.user.pk == self.kwargs.get("pk") else False
+
+    def get_success_url(self):
+        return reverse_lazy("authapp:profile_edit", args=[self.request.user.pk])
