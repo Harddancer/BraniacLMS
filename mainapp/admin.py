@@ -1,17 +1,9 @@
-@admin.register(mainapp_models.Lesson)
-class LessonAdmin(admin.ModelAdmin):
-    list_display = ["id", "get_course_name", "num", "title", "deleted"]
-    ordering = ["-course__name", "-num"]
-    list_per_page = 5
-    list_filter = ["course", "created", "deleted"]
-    actions = ["mark_deleted"]
+from django.contrib import admin
 
-    def get_course_name(self, obj):
-        return obj.course.name
+from authapp import models
 
-    get_course_name.short_description = _("Course")
 
-    def mark_deleted(self, request, queryset):
-        queryset.update(deleted=True)
-
-    mark_deleted.short_description = _("Mark deleted")
+@admin.register(models.CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ["id", "username", "email", "is_active", "date_joined"]
+    ordering = ["-date_joined"]
