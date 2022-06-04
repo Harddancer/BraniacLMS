@@ -153,3 +153,30 @@ SOCIAL_AUTH_GITHUB_KEY = "ff0486a3fdc08da9e60e"
 SOCIAL_AUTH_GITHUB_SECRET = "ab36d3745f609ca70566d8bda5fe47b666221fbb"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+
+LOG_FILE = BASE_DIR / "var" / "log" / "main_log.log"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "console": {"format": "[%(asctime)s] %(levelname)s %(name)s (%(lineno)d) %(message)s"},
+    },
+    "handlers": {
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": LOG_FILE,
+            "formatter": "console",
+        },
+        "console": {"class": "logging.StreamHandler", "formatter": "console"},
+    },
+    "loggers": {
+        "django": {"level": "INFO", "handlers": ["console"]},
+        "mainapp": {
+            "level": "DEBUG",
+            "handlers": ["file"],
+        },
+    },
+}
