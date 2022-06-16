@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*!eu26e3)fj6uh0z+1e&4al7izw#0e&pupk9u_*)asez-r-g%y"
+SECRET_KEY = "django-insecure-pd&w016(#3#_th*$r03ak@%e^o(6qhua=#-#b2oxvt_y1dg(em"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,7 +35,6 @@ if DEBUG:
 
 
 # Application definition
-
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -119,13 +118,17 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
 AUTH_USER_MODEL = "authapp.CustomUser"
+
 AUTHENTICATION_BACKENDS = (
     "social_core.backends.github.GithubOAuth2",
     "django.contrib.auth.backends.ModelBackend",
 )
+
 LOGIN_REDIRECT_URL = "mainapp:main_page"
 LOGOUT_REDIRECT_URL = "mainapp:main_page"
+
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 # Internationalization
@@ -151,19 +154,20 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
 # Media files
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = BASE_DIR / "media"
 
-SOCIAL_AUTH_GITHUB_KEY = "ff0486a3fdc08da9e60e"
-SOCIAL_AUTH_GITHUB_SECRET = "ab36d3745f609ca70566d8bda5fe47b666221fbb"
+SOCIAL_AUTH_GITHUB_KEY = "577037078c081320d574"
+SOCIAL_AUTH_GITHUB_SECRET = "ec7ef6f936bdc97944d9f10ee35c40411104abe2"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
-
 
 LOG_FILE = BASE_DIR / "var" / "log" / "main_log.log"
 
@@ -223,4 +227,7 @@ CELERY_RESULT_BACKEND = "redis://localhost:6379"
 # Email as files for debug
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = "var/email-messages/"
+
 LOCALE_PATHS = [BASE_DIR / "locale"]
+
+SELENIUM_DRIVER_PATH_FF = BASE_DIR / "var" / "selenium" / "geckodriver"
